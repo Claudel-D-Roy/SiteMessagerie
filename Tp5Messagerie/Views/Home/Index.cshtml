@@ -1,0 +1,90 @@
+﻿@using Tp5Messagerie.ViewModels.Home;
+@model HomeVM
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+<h3>Forum</h3>
+<form method="post" asp-action="AjouterMessage">
+    <input type="hidden" name="MessageId" />
+    <textarea name="Contenu" style="width: 80%;">@System.Web.HttpUtility.HtmlEncode(Model.Contenu)</textarea>
+    <button type="submit">Ajouter un message</button>
+</form>
+
+@if (Model.PagingInfo.TotalPages > 1)
+{
+    <div class="pagination">
+        @if (Model.PagingInfo.CurrentPage > 1)
+        {
+            <a asp-action="Index" asp-route-page="1" class="btn btn-default">&lt;&lt;</a>
+            <a asp-action="Index" asp-route-page="@Model.PagingInfo.CurrentPage - 1" class="btn btn-default"> &gt;&gt; </a>
+        }
+
+        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+        {
+            if (i == Model.PagingInfo.CurrentPage)
+            {
+                <a class="btn btn-default">@i</a>
+            }
+            else
+            {
+                <a asp-action="Index" asp-route-page="@i" class="btn btn-default">@i</a>
+            }
+        }
+
+        @if (Model.PagingInfo.CurrentPage < Model.PagingInfo.TotalPages)
+        {
+            <a asp-action="Index" asp-route-page="@Model.PagingInfo.CurrentPage + 1" class="btn btn-default">></a>
+            <a asp-action="Index" asp-route-page="@Model.PagingInfo.TotalPages" class="btn btn-default">>></a>
+        }
+    </div>
+}
+
+@if (Model.Messages.Count() == 0)
+{
+    <h3>Liste des messages</h3>
+    <p>/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\</p>
+
+    <p>Aucun message</p>
+
+}
+else
+{
+    <h3>Liste des messages</h3>
+    @foreach (var message in Model.Messages)
+    {
+        <p>/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\</p>
+        <h4>Message</h4>
+
+        <p>Par @message.UserCom.UserName le @message.CreatedDate</p>
+        <pre>@message.Contenu</pre>
+        <form method="post" asp-action="RemoveMessage">
+            <input type="hidden" name="Id" value="@message.Id" />
+            <button type="submit">Supprimer</button>
+        </form>
+        
+        <form method="post" asp-action="RepondreMessage">
+            <input type="hidden" name="Id" value="@message.Id" />
+            <textarea name="Contenu" style="width: 80%;">@System.Web.HttpUtility.HtmlEncode(Model.Contenu)</textarea>
+            <button type="submit">Ajouter un commentaire</button>
+        </form>
+        <h4>Commentaires</h4>
+        <p>/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\</p>
+        @foreach (var comment in message.Commentaires!)
+        {
+            <div>
+                <p>Par @comment.IdUser.UserName le @comment.CreatedDate</p>
+                <pre>@comment.Contenu</pre>
+                <form method="post" asp-action="RemoveCommentaire">
+                    <input type="hidden" name="Id" value="@comment.Id" />
+                    <button type="submit">Supprimer</button>
+                </form>
+            </div>
+        }
+    }
+}

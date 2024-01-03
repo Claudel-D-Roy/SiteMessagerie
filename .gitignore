@@ -1,0 +1,9 @@
+﻿################################################################################
+# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
+################################################################################
+
+/Tp5Messagerie/obj
+/Tp5Messagerie/Tp5Messagerie.csproj.user
+/.vs/Tp5Messagerie/FileContentIndex
+/.vs/Tp5Messagerie
+/Tp5Messagerie/bin/Debug/net7.0
